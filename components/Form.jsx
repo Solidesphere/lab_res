@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -8,24 +9,34 @@ import logo from "@/public/logo.png";
 
 const Form = () => {
   const [identifiant, setIdentifiant] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage(""); // reset any previous error
     if (identifiant) {
       const query = `?identifiant=${identifiant}`;
-      const response = await fetch(`/api/download/${identifiant}.pdf`);
-      if (response.status === 404) {
-        alert("resultat non disponible, veuillez réessayer plus tard");
-      } else {
-        router.push(`/resultats${query}`);
+      try {
+        const response = await fetch(`/api/download/${identifiant}.pdf`);
+        if (response.status === 404) {
+          setErrorMessage(
+            "Résultat non disponible, veuillez réessayer plus tard."
+          );
+        } else {
+          router.push(`/resultats${query}`);
+        }
+      } catch (error) {
+        setErrorMessage("Une erreur est survenue. Veuillez réessayer.");
       }
     }
   };
+
   return (
-    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 ">
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm ">
+    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <Image src={logo} alt="logo" className="mx-auto h-30 w-auto" />
-        <h2 className="mt-7 text-center text-xl font-bold tracking-tight text-gray-900 ">
+        <h2 className="mt-7 text-center text-xl font-bold tracking-tight text-gray-900">
           Veuillez saisir votre identifiant pour accéder à vos résultats
         </h2>
       </div>
@@ -53,6 +64,9 @@ const Form = () => {
                 }}
               />
             </div>
+            {errorMessage && (
+              <p className="text-red-500 text-sm mt-2">{errorMessage}</p>
+            )}
           </div>
 
           <div>
