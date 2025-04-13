@@ -62,7 +62,6 @@ const Form = () => {
             >
               Consulter les résultats
             </button>
-            -
           </div>
         </form>
       </div>
