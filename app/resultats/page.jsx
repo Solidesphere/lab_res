@@ -1,30 +1,34 @@
 "use client";
-import { pdfjs } from "react-pdf";
-import { useState } from "react";
-import { Document, Page } from "react-pdf";
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.mjs",
-  import.meta.url
-).toString();
+import { useEffect, useState } from "react";
 
 function Resultats({ searchParams: { identifiant } }) {
-  const [numPages, setNumPages] = useState();
-  const [pageNumber, setPageNumber] = useState(1);
-  const [showDownloadButton, setShowDownloadButton] = useState(false);
-  const [showBackButton, setShowBackButton] = useState(false);
-  function onDocumentLoadSuccess({ numPages }) {
-    setNumPages(numPages);
-    setShowDownloadButton(true);
-  }
+  const [pdfExists, setPdfExists] = useState(false);
 
-  if (!identifiant) {
-    return <div>Identifiant is required</div>;
-  }
+  useEffect(() => {
+    const checkPDF = async () => {
+      try {
+        const response = await fetch(`/api/download/${identifiant}.pdf`);
+        // Check content type to confirm it's a valid PDF
+        const contentType = response.headers.get("Content-Type");
+        if (response.ok && contentType === "application/pdf") {
+          setPdfExists(true);
+        } else {
+          setPdfExists(false);
+        }
+      } catch (error) {
+        setPdfExists(false);
+      }
+    };
+
+    if (identifiant) {
+      checkPDF();
+    }
+  }, [identifiant]);
 
   return (
     <div className="text-center mx-auto">
-      {showDownloadButton && (
+      {pdfExists && (
         <button
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full text-center mx-auto mt-20"
           onClick={async () => {
@@ -38,23 +42,22 @@ function Resultats({ searchParams: { identifiant } }) {
             URL.revokeObjectURL(url);
           }}
         >
-          telecharger resultats
+          Télécharger Résultats
         </button>
       )}
 
-      <Document
-        className="flex flex-col items-center justify-center"
-        file={`/api/download/${identifiant}.pdf`}
-        onLoadSuccess={onDocumentLoadSuccess}
-        error={"resultat non disponible, veuillez réessayer plus tard"}
-        loading={"chargement..."}
-        canvas={"canvas"}
-      >
-        <Page pageNumber={pageNumber} />
-      </Document>
-      <p>
-        Page {pageNumber} of {numPages}
-      </p>
+      <div className="flex justify-center mt-10">
+        {pdfExists ? (
+          <iframe
+            src={`/api/download/${identifiant}.pdf`}
+            className="w-[80%] h-[600px] border-none"
+          ></iframe>
+        ) : (
+          <p className="text-gray-500 mt-10">
+            resultat non disponible, veuillez réessayer plus tard .
+          </p>
+        )}
+      </div>
     </div>
   );
 }

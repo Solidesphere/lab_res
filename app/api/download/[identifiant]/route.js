@@ -25,7 +25,8 @@ export async function GET(req, { params }) {
     status: 200,
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="${identifiant}"`,
+
+      "Content-Disposition": "inline",
     },
   });
 }
