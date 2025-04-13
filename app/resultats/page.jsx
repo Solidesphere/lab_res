@@ -1,15 +1,18 @@
 "use client";
 
+import { useSearchParams } from "next/navigation"; // Import the hook
 import { useEffect, useState } from "react";
 
-function Resultats({ searchParams: { identifiant } }) {
+function Resultats() {
+  const searchParams = useSearchParams(); // Get searchParams using the hook
+  const identifiant = searchParams.get("identifiant"); // Access identifiant from the URL
+
   const [pdfExists, setPdfExists] = useState(false);
 
   useEffect(() => {
     const checkPDF = async () => {
       try {
         const response = await fetch(`/api/download/${identifiant}.pdf`);
-        // Check content type to confirm it's a valid PDF
         const contentType = response.headers.get("Content-Type");
         if (response.ok && contentType === "application/pdf") {
           setPdfExists(true);
@@ -54,7 +57,7 @@ function Resultats({ searchParams: { identifiant } }) {
           ></iframe>
         ) : (
           <p className="text-gray-500 mt-10">
-            resultat non disponible, veuillez réessayer plus tard .
+            Résultat non disponible, veuillez réessayer plus tard.
           </p>
         )}
       </div>
