@@ -58,10 +58,11 @@ export default function ResultatsClient() {
 
       <div className="flex justify-center mt-10">
         {pdfExists ? (
-          <iframe
+          <embed
             src={`/api/download/${identifiant}.pdf`}
-            className="w-[80%] h-[600px] border-none"
-          ></iframe>
+            type="application/pdf"
+            className="w-full sm:w-[80%] h-[400px] sm:h-[600px] border-none"
+          />
         ) : (
           <p className="text-gray-500 mt-10">
             Résultat non disponible, veuillez réessayer plus tard.

@@ -3,7 +3,7 @@ import path from "path";
 import fs from "fs";
 
 export async function GET(req, { params }) {
-  const { identifiant } = params;
+  const { identifiant } = await params;
 
   // Only allow .pdf files
   if (!identifiant.endsWith(".pdf")) {
