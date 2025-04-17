@@ -56,7 +56,7 @@ export default function ResultatsClient() {
         </button>
       )}
 
-      <div className="flex justify-center mt-10">
+      <div className="flex justify-center my-10">
         {pdfExists ? (
           <embed
             src={`/api/download/${identifiant}.pdf`}
