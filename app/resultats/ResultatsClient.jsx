@@ -46,27 +46,49 @@ export default function ResultatsClient() {
   };
 
   return (
-    <div className="text-center mx-auto">
+    <div className="flex flex-col items-center justify-center px-6 py-10">
       {pdfExists && (
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full mt-20"
-          onClick={handleDownload}
-        >
-          Télécharger Résultats
-        </button>
+        <div className="mb-8 animate-fade-in">
+          <button
+            onClick={handleDownload}
+            className="bg-gradient-to-r from-blue-400 via-blue-500 to-indigo-500 hover:from-blue-500 hover:to-indigo-600 text-white font-semibold px-6 py-3 rounded-full shadow-lg transition-all duration-300 ease-in-out hover:scale-105"
+          >
+            📄 Télécharger les Résultats
+          </button>
+        </div>
       )}
 
-      <div className="flex justify-center my-10">
+      <div className="w-full sm:w-[90%] lg:w-[80%] rounded-xl bg-white/30 backdrop-blur-lg p-4 shadow-xl ring-1 ring-black/10 animate-fade-in">
         {pdfExists ? (
           <embed
             src={`/api/download/${identifiant}.pdf`}
             type="application/pdf"
-            className="w-full sm:w-[80%] h-[400px] sm:h-[600px] border-none"
+            className="w-full h-[500px] rounded-lg border-none"
           />
         ) : (
-          <p className="text-gray-500 mt-10">
-            Résultat non disponible, veuillez réessayer plus tard.
-          </p>
+          <div
+            role="alert"
+            className="mt-6 max-w-xl mx-auto rounded-lg border border-orange-300 bg-orange-50 px-4 py-4 text-orange-800 shadow-md animate-fade-in"
+          >
+            <div className="flex items-center gap-3">
+              <svg
+                className="w-6 h-6 text-orange-500"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 9v2m0 4h.01M21 12A9 9 0 113 12a9 9 0 0118 0z"
+                />
+              </svg>
+              <p className="text-md font-medium">
+                Résultat non disponible, veuillez réessayer plus tard.
+              </p>
+            </div>
+          </div>
         )}
       </div>
     </div>

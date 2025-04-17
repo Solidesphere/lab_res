@@ -70,12 +70,19 @@ const Form = () => {
             {errorMessage && (
               <div
                 role="alert"
-                className="mt-4 animate-slide-fade transition-all duration-500 ease-out"
+                className="relative mt-6 mx-auto max-w-md animate-slide-fade rounded-lg shadow-lg ring-1 ring-orange-300 bg-orange-50"
               >
-                <div className="bg-orange-500 text-white font-bold rounded-t px-4 py-2">
-                  Oops !
+                <div className="flex items-center justify-between bg-orange-500 text-white font-bold rounded-t px-4 py-2">
+                  <span>Oops !</span>
+                  <button
+                    onClick={() => setErrorMessage("")}
+                    className="text-white hover:text-orange-100 transition"
+                    aria-label="Close alert"
+                  >
+                    ×
+                  </button>
                 </div>
-                <div className="border border-t-0 border-orange-400 rounded-b bg-red-100 px-4 py-3 text-orange-700">
+                <div className="px-4 py-3 text-orange-800 text-base">
                   <p>{errorMessage}</p>
                 </div>
               </div>
