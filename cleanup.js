@@ -40,6 +40,7 @@ export function deleteOldPDFs() {
       }
     });
   });
+  console.log(`Cleanup task completed`);
 }
 
 console.log("Running cleanup task now...");
