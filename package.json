@@ -11,6 +11,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@react-pdf-viewer/core": "^3.12.0",
+    "@react-pdf-viewer/default-layout": "^3.12.0",
+    "@react-pdf-viewer/page-navigation": "^3.12.0",
+    "lucide-react": "^0.503.0",
     "next": "15.3.0",
     "node-cron": "^3.0.3",
     "react": "^19.0.0",

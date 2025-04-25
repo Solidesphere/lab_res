@@ -1,74 +1,98 @@
 "use client";
 
+import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Worker, Viewer } from "@react-pdf-viewer/core";
+import { Home, Download } from "lucide-react";
+
+import "@react-pdf-viewer/core/lib/styles/index.css";
 
 export default function ResultatsClient() {
   const searchParams = useSearchParams();
-  const identifiant = searchParams.get("identifiant");
+  const identifiant = searchParams.get("identifiant") || "";
 
   const [pdfExists, setPdfExists] = useState(false);
 
-  useEffect(() => {
-    const checkPDF = async () => {
-      try {
-        const response = await fetch(`/api/download/${identifiant}.pdf`);
-        const contentType = response.headers.get("Content-Type");
+  const pdfUrl = `/api/download/${identifiant}.pdf`;
 
-        if (response.ok && contentType === "application/pdf") {
-          setPdfExists(true);
-        } else {
-          setPdfExists(false);
-        }
-      } catch (error) {
+  // Vérifie que le PDF existe et est de type application/pdf
+  useEffect(() => {
+    async function checkPDF() {
+      try {
+        const res = await fetch(pdfUrl);
+        const ct = res.headers.get("Content-Type");
+        setPdfExists(res.ok && ct === "application/pdf");
+      } catch {
         setPdfExists(false);
       }
-    };
+    }
 
     if (identifiant) {
       checkPDF();
     }
-  }, [identifiant]);
+  }, [pdfUrl, identifiant]);
 
+  // Gestion du téléchargement
   const handleDownload = async () => {
     try {
-      const response = await fetch(`/api/download/${identifiant}.pdf`);
-      const blob = await response.blob();
+      const res = await fetch(pdfUrl);
+      const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
       a.download = `${identifiant}.pdf`;
       a.click();
       URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Erreur lors du téléchargement :", error);
+    } catch (e) {
+      console.error("Erreur lors du téléchargement :", e);
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center px-6 py-10">
+    <div className="flex flex-col items-center justify-center px-6 py-10 space-y-6">
+      {/* Bouton de téléchargement */}
       {pdfExists && (
-        <div className="mb-8 animate-fade-in">
+        <div className="mb-4 animate-fade-in">
           <button
             onClick={handleDownload}
-            className="bg-gradient-to-r from-blue-400 via-blue-500 to-indigo-500 hover:from-blue-500 hover:to-indigo-600 text-white font-semibold px-6 py-3 rounded-full shadow-lg transition-all duration-300 ease-in-out hover:scale-105"
+            className="flex items-center gap-2 bg-gradient-to-r from-blue-400 via-blue-500 to-indigo-500
+             hover:from-blue-500 hover:to-indigo-600 text-white font-semibold px-6 py-3
+             rounded-full shadow-lg transition-all duration-300 ease-in-out hover:scale-105"
           >
-            📄 Télécharger les Résultats
+            <Download size={20} />
+            <span>Télécharger les Résultats</span>
           </button>
         </div>
       )}
 
-      <div className="w-full sm:w-[90%] lg:w-[80%] rounded-xl bg-white/30 backdrop-blur-lg p-4 shadow-xl ring-1 ring-black/10 animate-fade-in">
+      {/* Bouton Accueil */}
+      <div className="mb-4 animate-fade-in">
+        <Link href="/">
+          <button
+            className="flex items-center gap-2 text-white bg-green-500 hover:bg-green-600
+                                font-semibold px-4 py-2 rounded-full shadow transition duration-200 ease-in-out"
+          >
+            <Home size={20} />
+            <span>Accueil</span>
+          </button>
+        </Link>
+      </div>
+
+      {/* Affichage du PDF */}
+      <div
+        className="w-full sm:w-[90%] lg:w-[100%] rounded-xl bg-white/30  p-4 shadow-xl
+                      ring-1 ring-black/10 animate-fade-in"
+      >
         {pdfExists ? (
-          <embed
-            src={`/api/download/${identifiant}.pdf`}
-            type="application/pdf"
-            className="w-full h-[500px] rounded-lg border-none"
-          />
+          <Worker workerUrl="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js">
+            <Viewer fileUrl={pdfUrl} />
+          </Worker>
         ) : (
           <div
             role="alert"
-            className="mt-6 max-w-xl mx-auto rounded-lg border border-orange-300 bg-orange-50 px-4 py-4 text-orange-800 shadow-md animate-fade-in"
+            className="mt-6 max-w-xl mx-auto rounded-lg border border-orange-300 bg-orange-50 px-4 py-4
+                       text-orange-800 shadow-md animate-fade-in"
           >
             <div className="flex items-center gap-3">
               <svg
